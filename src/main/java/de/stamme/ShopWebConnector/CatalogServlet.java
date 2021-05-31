@@ -53,7 +53,7 @@ public class CatalogServlet extends HttpServlet {
         // Add to Cart Notification
         if (action != null && action.equals("addArticle")) {
             try {
-                Integer articleId = Integer.parseInt(request.getParameter("articleId"));
+                int articleId = Integer.parseInt(request.getParameter("articleId"));
                 Integer customerId = getCustomerIdFromSession(request);
                 Article article = onlineShop.getArticle(articleId);
 

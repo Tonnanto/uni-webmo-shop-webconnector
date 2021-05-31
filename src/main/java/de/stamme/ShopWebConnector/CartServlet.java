@@ -1,6 +1,7 @@
 package de.stamme.ShopWebConnector;
 
 import de.leuphana.shop.behaviour.Shop;
+import de.leuphana.shop.structure.Article;
 import de.leuphana.shop.structure.Cart;
 import de.leuphana.shop.structure.CartItem;
 import jakarta.servlet.RequestDispatcher;
@@ -43,11 +44,24 @@ public class CartServlet extends HttpServlet {
 
         RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
 
+        String action = request.getParameter("action");
+
         out.println("<html>");
         printHead();
 
         out.println("<body>");
         bannerRequestDispatcher.include(request, response);
+
+        // Remove article from cart
+        if (action != null && action.equals("removeArticle")) {
+            try {
+                int articleId = Integer.parseInt(request.getParameter("articleId"));
+                decrementCartItemQuantity(articleId);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid article ID: " + request.getParameter("articleId"));
+            }
+        }
 
         printCart(onlineShop.getCartForCustomer(customerId));
 
@@ -105,7 +119,7 @@ public class CartServlet extends HttpServlet {
             out.println("<tr data-href=\"./showArticle?articleId=%s\">");
             out.println(String.format(
                     "<td><img class=\"thumbnail-image\" src=\"%s\"></td><td><a href=\"./showArticle?articleId=%s\">%s</a><td>%s pcs.</td></td><td>%s</td><td>"
-                            + "<a class=\"button\" href=\"\">Remove from cart</a></td>",
+                            + "<a class=\"button\" href=\"./showCart?action=removeArticle&articleId=%s\">Remove from cart</a></td>",
                     imageLocation, articleId, name, quantity, price, articleId
             ));
             out.println("</tr>");
@@ -134,6 +148,7 @@ public class CartServlet extends HttpServlet {
     }
 
     private void decrementCartItemQuantity(Integer articleId) {
-        // TODO
+        Integer customerId = getCustomerIdFromSession(request);
+        onlineShop.decrementArticleQuantityInCart(customerId, articleId);
     }
 }

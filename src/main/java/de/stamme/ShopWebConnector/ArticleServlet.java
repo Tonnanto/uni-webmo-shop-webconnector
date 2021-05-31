@@ -67,6 +67,7 @@ public class ArticleServlet extends HttpServlet {
 
     private void printHead() {
         out.println("<head>"
+                + "<meta charset=\"utf-8\">"
                 + "<title>Catalog</title>"
                 + "<link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap\" rel=\"stylesheet\">\r\n"
                 + "<link href=\"style.css\" rel=\"stylesheet\">"

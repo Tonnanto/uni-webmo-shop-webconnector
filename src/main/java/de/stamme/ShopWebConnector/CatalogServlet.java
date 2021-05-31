@@ -20,16 +20,24 @@ public class CatalogServlet extends HttpServlet {
 
     private Shop onlineShop;
     private PrintWriter out;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+
     private DecimalFormat priceFormatter;
 
-    // TODO: init method
+    @Override
+    public void init() {
+        onlineShop = Shop.create();
+        priceFormatter = new DecimalFormat("0.00€");
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        onlineShop = Shop.create();
-        out = response.getWriter();
-        priceFormatter = new DecimalFormat("0.00€");
+        this.request = request;
+        this.response = response;
+        this.out = response.getWriter();
+
         RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
 
         String action = request.getParameter("action");
@@ -69,6 +77,21 @@ public class CatalogServlet extends HttpServlet {
         out.close();
     }
 
+    private Integer getCustomerIdFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        Integer customerId = null;
+
+        if (session.getAttribute("customerId") instanceof Integer)
+            customerId = (Integer) session.getAttribute("customerId");
+
+        if (customerId == null) {
+            customerId = onlineShop.createCustomerWithCart();
+            session.setAttribute("customerId", customerId);
+        }
+
+        return customerId;
+    }
+
     private void printHead() {
         out.println("<head>"
                 + "<title>Catalog</title>"
@@ -76,13 +99,6 @@ public class CatalogServlet extends HttpServlet {
                 + "<link href=\"style.css\" rel=\"stylesheet\">"
                 + "<link href=\"catalog.css\" rel=\"stylesheet\">"
                 + "</head>");
-    }
-
-
-    private void printAddedArticle(Article article) {
-        if (article == null) return;
-        out.println("<div class=\"added-to-cart-popup\"><p>Added to cart:<br>" + article.getName() + "</p></div>");
-
     }
 
     private void printCatalog() {
@@ -109,6 +125,11 @@ public class CatalogServlet extends HttpServlet {
         out.println("</table>");
     }
 
+    private void printAddedArticle(Article article) {
+        if (article == null) return;
+        out.println("<div class=\"added-to-cart-popup\"><p>Added to cart:<br>" + article.getName() + "</p></div>");
+    }
+
     private void printFooter() {
         // TODO
     }
@@ -118,21 +139,7 @@ public class CatalogServlet extends HttpServlet {
         return url;
     }
 
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
-    }
-
+    @Override
     public void destroy() {
         super.destroy();
     }

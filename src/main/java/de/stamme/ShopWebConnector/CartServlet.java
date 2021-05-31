@@ -21,6 +21,10 @@ public class CartServlet extends HttpServlet {
 
     private Shop onlineShop;
     private PrintWriter out;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private Integer customerId;
+
     private DecimalFormat priceFormatter;
 
     @Override
@@ -32,10 +36,12 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        out = response.getWriter();
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
+        this.response = response;
+        this.request = request;
+        this.out = response.getWriter();
+        this.customerId = getCustomerIdFromSession(request);
 
-        Integer customerId = getCustomerIdFromSession(request);
+        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
 
         out.println("<html>");
         printHead();
@@ -50,6 +56,21 @@ public class CartServlet extends HttpServlet {
 
         out.println("</html>");
         out.close();
+    }
+
+    private Integer getCustomerIdFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        Integer customerId = null;
+
+        if (session.getAttribute("customerId") instanceof Integer)
+            customerId = (Integer) session.getAttribute("customerId");
+
+        if (customerId == null) {
+            customerId = onlineShop.createCustomerWithCart();
+            session.setAttribute("customerId", customerId);
+        }
+
+        return customerId;
     }
 
     private void printHead() {
@@ -103,22 +124,16 @@ public class CartServlet extends HttpServlet {
         out.println("</table>");
     }
 
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
-    }
-
     private void printFooter() {
 
+    }
+
+    private String encodeUrl(String url) {
+        // TODO: encode URL
+        return url;
+    }
+
+    private void decrementCartItemQuantity(Integer articleId) {
+        // TODO
     }
 }

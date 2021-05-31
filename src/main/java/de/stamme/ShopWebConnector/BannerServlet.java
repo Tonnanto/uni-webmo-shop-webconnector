@@ -17,8 +17,14 @@ public class BannerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        out = response.getWriter();
 
-        // Set fields
+        response.setContentType("text/html");
+        printBanner();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         out = response.getWriter();
 
         response.setContentType("text/html");

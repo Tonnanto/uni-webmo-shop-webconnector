@@ -22,16 +22,23 @@ public class ArticleServlet extends HttpServlet {
 
     private Shop onlineShop;
     private PrintWriter out;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+
     private DecimalFormat priceFormatter;
 
-    // TODO: init method
+    @Override
+    public void init() {
+        priceFormatter = new DecimalFormat("0.00€");
+        onlineShop = Shop.create();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        priceFormatter = new DecimalFormat("0.00€");
-        onlineShop = Shop.create();
         out = response.getWriter();
+        this.request = request;
+        this.response = response;
 
         RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
 
@@ -111,5 +118,10 @@ public class ArticleServlet extends HttpServlet {
 
     private void printFooter() {
 
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
     }
 }

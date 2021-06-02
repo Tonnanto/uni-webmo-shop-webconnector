@@ -26,8 +26,7 @@ td:nth-child(2) {
     font-size: 20px;
 }
 
-td:a {
-    color: gray;
+td a {
     text-decoration: none;
 }
 
@@ -50,4 +49,9 @@ tfoot {
     color: gray;
     text-align: center;
     margin-top: 3vh;
+}
+
+.order-button {
+    font-size: 20px;
+    margin: auto;
 }

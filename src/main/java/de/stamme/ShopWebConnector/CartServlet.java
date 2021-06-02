@@ -131,15 +131,18 @@ public class CartServlet extends HttpServlet {
         // Total Price Footer
         out.println("<tr><td></td><td></td>\r\n"
                 + "<td>Total:</td>\r\n"
-                + "<td>" + priceFormatter.format(cart.getTotalPrice()) + "</td>\r\n"
+                + "<td>" + priceFormatter.format(cart.getTotalPrice()) + "</td><td></td>\r\n"
                 + "</tr>");
 
         out.println("</tfoot>");
 
         out.println("</table>");
+
+        out.println("<a class=\"order-button\" href=\"./orderArticles\">Order Articles</a>");
     }
 
     private void printFooter() {
+
 
     }
 

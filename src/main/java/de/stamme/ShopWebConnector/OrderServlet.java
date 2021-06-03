@@ -1,7 +1,6 @@
 package de.stamme.ShopWebConnector;
 
 import de.leuphana.shop.behaviour.Shop;
-import de.leuphana.shop.structure.Article;
 import de.leuphana.shop.structure.Cart;
 import de.leuphana.shop.structure.CartItem;
 import jakarta.servlet.RequestDispatcher;
@@ -16,12 +15,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
-@WebServlet(name = "CartServlet", value = "/showCart")
-public class CartServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+@WebServlet(name = "OrderServlet", value = "/orderArticles")
+public class OrderServlet extends HttpServlet {
 
-    private Shop onlineShop;
     private PrintWriter out;
+    private Shop onlineShop;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private Integer customerId;
@@ -37,78 +35,65 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        this.response = response;
         this.request = request;
+        this.response = response;
         this.out = response.getWriter();
         this.customerId = getCustomerIdFromSession(request);
 
         RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
 
-        // Remove article from cart if clicked
-        String action = request.getParameter("action");
-        if (action != null && action.equals("removeArticle")) {
-            try {
-                int articleId = Integer.parseInt(request.getParameter("articleId"));
-                decrementCartItemQuantity(articleId);
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid article ID: " + request.getParameter("articleId"));
-            }
-        }
-
         out.println("<html>");
+
         printHead();
 
         out.println("<body>");
+
         bannerRequestDispatcher.include(request, response);
 
         out.println("<div class=\"main-content\">");
-        printCart(onlineShop.getCartForCustomer(customerId));
+        printCartAndOrderForm();
         out.println("</div>");
 
         printFooter();
+
         out.println("</body>");
 
         out.println("</html>");
+
         out.close();
-    }
-
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
     }
 
     private void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
-                + "<title>Catalog</title>"
+                + "<title>Order</title>"
                 + "<link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap\" rel=\"stylesheet\">\r\n"
                 + "<link href=\"style.css\" rel=\"stylesheet\">"
                 + "<link href=\"cart.css\" rel=\"stylesheet\">"
                 + "</head>");
     }
 
+    private void printCartAndOrderForm() {
+        Cart cart = onlineShop.getCartForCustomer(this.customerId);
 
-    private void printCart(Cart cart) {
-
-        if (cart == null || cart.getCartItems().size() == 0) {
+        // Check if items in cart
+        if (cart == null || cart.getNumberOfArticles() == 0) {
             out.println("<p class=\"cart-empty-message\">Your cart is empty.</p>");
             return;
         }
 
-        // CartItems
+        printCart(cart);
+        printOrderForm();
+    }
+
+    private void printCart(Cart cart) {
+
+        Integer numberOfArticles = cart.getNumberOfArticles();
+        out.printf("<h3>You have %s articles in your cart:<h3>", numberOfArticles);
+
         out.println("<table>");
-        out.println("<tr><th></th><th>Cart</th><th>Amount</th><th>Price</th></tr>");
+
+        out.println("<tr><th></th><th></th><th>Amount</th><th>Price</th></tr>");
 
         for (CartItem cartItem : cart.getCartItems()) {
 
@@ -138,22 +123,44 @@ public class CartServlet extends HttpServlet {
         out.println("</tfoot>");
 
         out.println("</table>");
+    }
 
-        out.println("<a class=\"order-button\" href=\"./orderArticles\">Order Articles</a>");
+    private void printOrderForm() {
+        out.println("<div class=\"order-form\">");
+        out.println("<h3>Please enter your information here:</h3>");
+
+        out.println("<form action=\"./showReceipt\" method=post>");
+
+        out.println("<label for=\"firstName\">First name:</label><br>");
+        out.println("<input type=\"text\" id=\"firstName\" name=\"firstName\" value=\"\"><br>");
+        out.println("<label for=\"lastName\">Last name:</label><br>");
+        out.println("<input type=\"text\" id=\"lastName\" name=\"lastName\" value=\"\"><br>");
+        out.println("<label for=\"creditCardNumber\">Credit Card Number:</label><br>");
+        out.println("<input type=\"number\" id=\"creditCardNumber\" name=\"creditCardNumber\" value=\"\"><br><br>");
+
+        out.println("<input type=\"submit\" value=\"Submit\">");
+
+        out.println("</form>");
+
+        out.println("</div>");
     }
 
     private void printFooter() {
 
-
     }
 
-    private String encodeUrl(String url) {
-        // TODO: encode URL
-        return url;
-    }
+    private Integer getCustomerIdFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        Integer customerId = null;
 
-    private void decrementCartItemQuantity(Integer articleId) {
-        Integer customerId = getCustomerIdFromSession(request);
-        onlineShop.decrementArticleQuantityInCart(customerId, articleId);
+        if (session.getAttribute("customerId") instanceof Integer)
+            customerId = (Integer) session.getAttribute("customerId");
+
+        if (customerId == null) {
+            customerId = onlineShop.createCustomerWithCart();
+            session.setAttribute("customerId", customerId);
+        }
+
+        return customerId;
     }
 }

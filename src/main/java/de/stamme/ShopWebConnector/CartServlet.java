@@ -44,15 +44,8 @@ public class CartServlet extends HttpServlet {
 
         RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
 
+        // Remove article from cart if clicked
         String action = request.getParameter("action");
-
-        out.println("<html>");
-        printHead();
-
-        out.println("<body>");
-        bannerRequestDispatcher.include(request, response);
-
-        // Remove article from cart
         if (action != null && action.equals("removeArticle")) {
             try {
                 int articleId = Integer.parseInt(request.getParameter("articleId"));
@@ -63,7 +56,15 @@ public class CartServlet extends HttpServlet {
             }
         }
 
+        out.println("<html>");
+        printHead();
+
+        out.println("<body>");
+        bannerRequestDispatcher.include(request, response);
+
+        out.println("<div class=\"main-content\">");
         printCart(onlineShop.getCartForCustomer(customerId));
+        out.println("</div>");
 
         printFooter();
         out.println("</body>");

@@ -129,14 +129,14 @@ public class OrderServlet extends HttpServlet {
         out.println("<div class=\"order-form\">");
         out.println("<h3>Please enter your information here:</h3>");
 
-        out.println("<form action=\"./showReceipt\">");
+        out.println("<form action=\"./showReceipt\" method=post>");
 
         out.println("<label for=\"firstName\">First name:</label><br>");
         out.println("<input type=\"text\" id=\"firstName\" name=\"firstName\" value=\"\"><br>");
         out.println("<label for=\"lastName\">Last name:</label><br>");
         out.println("<input type=\"text\" id=\"lastName\" name=\"lastName\" value=\"\"><br>");
         out.println("<label for=\"creditCardNumber\">Credit Card Number:</label><br>");
-        out.println("<input type=\"text\" id=\"creditCardNumber\" name=\"creditCardNumber\" value=\"\"><br><br>");
+        out.println("<input type=\"number\" id=\"creditCardNumber\" name=\"creditCardNumber\" value=\"\"><br><br>");
 
         out.println("<input type=\"submit\" value=\"Submit\">");
 

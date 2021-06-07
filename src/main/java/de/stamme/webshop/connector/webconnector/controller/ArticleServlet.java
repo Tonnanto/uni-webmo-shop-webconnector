@@ -1,4 +1,4 @@
-package de.stamme.ShopWebConnector;
+package de.stamme.webshop.connector.webconnector.controller;
 
 import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Article;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "ArticleServlet", value = "/showArticle")
-public class ArticleServlet extends HttpServlet {
+public class ArticleServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
     private Shop onlineShop;
@@ -63,6 +63,11 @@ public class ArticleServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             System.out.println("Invalid article ID: " + request.getParameter("articleId"));
         }
+    }
+
+    @Override
+    protected void printBody() {
+
     }
 
     private void printHead() {
@@ -115,14 +120,5 @@ public class ArticleServlet extends HttpServlet {
             out.println("</tr>");
         }
         out.println("</table>");
-    }
-
-    private void printFooter() {
-
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
     }
 }

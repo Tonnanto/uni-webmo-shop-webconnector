@@ -1,4 +1,4 @@
-package de.stamme.ShopWebConnector;
+package de.stamme.webshop.connector.webconnector.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(name = "BannerServlet", value = "/showBanner")
-public class BannerServlet extends HttpServlet {
+public class BannerServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
     protected PrintWriter out;
@@ -29,6 +29,11 @@ public class BannerServlet extends HttpServlet {
 
         response.setContentType("text/html");
         printBanner();
+    }
+
+    @Override
+    protected void printBody() {
+
     }
 
     private void printBanner() {

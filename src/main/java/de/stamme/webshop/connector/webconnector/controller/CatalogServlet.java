@@ -1,4 +1,4 @@
-package de.stamme.ShopWebConnector;
+package de.stamme.webshop.connector.webconnector.controller;
 
 import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Article;
@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 @WebServlet(name = "CatalogServlet", value = "/showCatalog")
-public class CatalogServlet extends HttpServlet {
+public class CatalogServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
     private Shop onlineShop;
@@ -77,6 +77,11 @@ public class CatalogServlet extends HttpServlet {
         out.close();
     }
 
+    @Override
+    protected void printBody() {
+
+    }
+
     private Integer getCustomerIdFromSession(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
         Integer customerId = null;
@@ -131,17 +136,8 @@ public class CatalogServlet extends HttpServlet {
         out.println("<div class=\"added-to-cart-popup\"><p>Added to cart:<br>" + article.getName() + "</p></div>");
     }
 
-    private void printFooter() {
-        // TODO
-    }
-
     private String encodeURL(String url) {
         // TODO
         return url;
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
     }
 }

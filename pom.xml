@@ -6,7 +6,7 @@
 
     <groupId>de.stamme</groupId>
     <artifactId>ShopWebConnector</artifactId>
-    <version>7.0-SNAPSHOT</version>
+    <version>9.0-SNAPSHOT</version>
     <name>ShopWebConnector</name>
     <packaging>war</packaging>
 

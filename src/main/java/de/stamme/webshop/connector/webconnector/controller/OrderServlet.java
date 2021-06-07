@@ -1,4 +1,4 @@
-package de.stamme.ShopWebConnector;
+package de.stamme.webshop.connector.webconnector.controller;
 
 import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Cart;
@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 @WebServlet(name = "OrderServlet", value = "/orderArticles")
-public class OrderServlet extends HttpServlet {
+public class OrderServlet extends WebshopServlet {
 
     private PrintWriter out;
     private Shop onlineShop;
@@ -61,6 +61,11 @@ public class OrderServlet extends HttpServlet {
         out.println("</html>");
 
         out.close();
+    }
+
+    @Override
+    protected void printBody() {
+
     }
 
     private void printHead() {
@@ -143,10 +148,6 @@ public class OrderServlet extends HttpServlet {
         out.println("</form>");
 
         out.println("</div>");
-    }
-
-    private void printFooter() {
-
     }
 
     private Integer getCustomerIdFromSession(HttpServletRequest request) {

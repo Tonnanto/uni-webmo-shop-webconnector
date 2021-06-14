@@ -18,57 +18,22 @@ import java.text.DecimalFormat;
 @WebServlet(name = "OrderServlet", value = "/orderArticles")
 public class OrderServlet extends WebshopServlet {
 
-    private PrintWriter out;
-    private Shop onlineShop;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private Integer customerId;
-
     private DecimalFormat priceFormatter;
 
     @Override
     public void init() {
-        onlineShop = Shop.create();
         priceFormatter = new DecimalFormat("0.00€");
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        this.request = request;
-        this.response = response;
-        this.out = response.getWriter();
-        this.customerId = getCustomerIdFromSession(request);
-
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
-
-        out.println("<html>");
-
-        printHead();
-
-        out.println("<body>");
-
-        bannerRequestDispatcher.include(request, response);
-
-        out.println("<div class=\"main-content\">");
-        printCartAndOrderForm();
-        out.println("</div>");
-
-        printFooter();
-
-        out.println("</body>");
-
-        out.println("</html>");
-
-        out.close();
-    }
 
     @Override
     protected void printBody() {
-
+        out.println("<div class=\"main-content\">");
+        printCartAndOrderForm();
+        out.println("</div>");
     }
 
-    private void printHead() {
+    protected void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
                 + "<title>Order</title>"
@@ -79,7 +44,7 @@ public class OrderServlet extends WebshopServlet {
     }
 
     private void printCartAndOrderForm() {
-        Cart cart = onlineShop.getCartForCustomer(this.customerId);
+        Cart cart = (Cart) request.getAttribute("cart");
 
         // Check if items in cart
         if (cart == null || cart.getNumberOfArticles() == 0) {
@@ -148,20 +113,5 @@ public class OrderServlet extends WebshopServlet {
         out.println("</form>");
 
         out.println("</div>");
-    }
-
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
     }
 }

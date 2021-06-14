@@ -20,83 +20,30 @@ import java.text.DecimalFormat;
 public class CartServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
-    private Shop onlineShop;
-    private PrintWriter out;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private Integer customerId;
-
     private DecimalFormat priceFormatter;
 
     @Override
     public void init() {
-        onlineShop = Shop.create();
         priceFormatter = new DecimalFormat("0.00€");
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        this.response = response;
-        this.request = request;
-        this.out = response.getWriter();
-        this.customerId = getCustomerIdFromSession(request);
-
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
-
-        // Remove article from cart if clicked
-        String action = request.getParameter("action");
-        if (action != null && action.equals("removeArticle")) {
-            try {
-                int articleId = Integer.parseInt(request.getParameter("articleId"));
-                decrementCartItemQuantity(articleId);
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid article ID: " + request.getParameter("articleId"));
-            }
-        }
-
-        out.println("<html>");
-        printHead();
-
-        out.println("<body>");
-        bannerRequestDispatcher.include(request, response);
-
-        out.println("<div class=\"main-content\">");
-        printCart(onlineShop.getCartForCustomer(customerId));
-        out.println("</div>");
-
-        printFooter();
-        out.println("</body>");
-
-        out.println("</html>");
-        out.close();
-    }
 
     @Override
     protected void printBody() {
+        Cart cart = (Cart) request.getAttribute("cart");
 
+        if (cart != null)
+            printCart(cart);
+        else
+            System.out.println("Cart not found");
     }
 
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
 
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
-    }
-
-    private void printHead() {
+    @Override
+    protected void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
-                + "<title>Catalog</title>"
+                + "<title>Cart</title>"
                 + "<link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap\" rel=\"stylesheet\">\r\n"
                 + "<link href=\"style.css\" rel=\"stylesheet\">"
                 + "<link href=\"cart.css\" rel=\"stylesheet\">"
@@ -147,13 +94,7 @@ public class CartServlet extends WebshopServlet {
         out.println("<a class=\"order-button\" href=\"./orderArticles\">Order Articles</a>");
     }
 
-    private String encodeUrl(String url) {
-        // TODO: encode URL
-        return url;
-    }
+    private void printDecrementCartItemQuantity(Article article) {
 
-    private void decrementCartItemQuantity(Integer articleId) {
-        Integer customerId = getCustomerIdFromSession(request);
-        onlineShop.decrementArticleQuantityInCart(customerId, articleId);
     }
 }

@@ -13,91 +13,29 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.Set;
 
 @WebServlet(name = "CatalogServlet", value = "/showCatalog")
 public class CatalogServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
-    private Shop onlineShop;
-    private PrintWriter out;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-
     private DecimalFormat priceFormatter;
 
     @Override
     public void init() {
-        onlineShop = Shop.create();
         priceFormatter = new DecimalFormat("0.00€");
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        this.request = request;
-        this.response = response;
-        this.out = response.getWriter();
-
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
-
-        String action = request.getParameter("action");
-
-        out.println("<html>");
-
-        printHead();
-
-        out.println("<body>");
-
-        bannerRequestDispatcher.include(request, response);
-
-        // Add to Cart Notification
-        if (action != null && action.equals("addArticle")) {
-            try {
-                int articleId = Integer.parseInt(request.getParameter("articleId"));
-                Integer customerId = getCustomerIdFromSession(request);
-                Article article = onlineShop.getArticle(articleId);
-
-                onlineShop.addArticleToCart(customerId, articleId);
-
-                printAddedArticle(article);
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid article ID: " + request.getParameter("articleId"));
-            }
-        }
+    protected void printBody() {
+        Article addedArticle = (Article) request.getAttribute("addedArticle");
+        if (addedArticle != null)
+            printAddedArticle(addedArticle);
 
         printCatalog();
-
-        printFooter();
-
-        out.println("</body>");
-
-        out.println("</html>");
-
-        out.close();
     }
 
-    @Override
-    protected void printBody() {
-
-    }
-
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
-    }
-
-    private void printHead() {
+    protected void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
                 + "<title>Catalog</title>"
@@ -108,11 +46,12 @@ public class CatalogServlet extends WebshopServlet {
     }
 
     private void printCatalog() {
+        Set<Article> catalog = Shop.create().getArticles();
         // Catalog (table)
         out.println("<table>");
         out.println("<tr><th></th><th>Catalog</th><th>Price</th></tr>");
 
-        for (Article article : onlineShop.getArticles()) {
+        for (Article article : catalog) {
 
             String imageLocation = article.getImageLocation();
             int articleId = article.getArticleId();
@@ -134,10 +73,5 @@ public class CatalogServlet extends WebshopServlet {
     private void printAddedArticle(Article article) {
         if (article == null) return;
         out.println("<div class=\"added-to-cart-popup\"><p>Added to cart:<br>" + article.getName() + "</p></div>");
-    }
-
-    private String encodeURL(String url) {
-        // TODO
-        return url;
     }
 }

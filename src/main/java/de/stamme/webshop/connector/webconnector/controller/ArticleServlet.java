@@ -20,60 +20,30 @@ import java.util.Map;
 public class ArticleServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
-    private Shop onlineShop;
-    private PrintWriter out;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-
     private DecimalFormat priceFormatter;
 
     @Override
     public void init() {
         priceFormatter = new DecimalFormat("0.00€");
-        onlineShop = Shop.create();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        out = response.getWriter();
-        this.request = request;
-        this.response = response;
-
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
-
-        try {
-            int articleId = Integer.parseInt(request.getParameter("articleId"));
-            Article article = onlineShop.getArticle(articleId);
-            if (article == null) return;
-
-
-            out.println("<html>");
-            printHead();
-
-            out.println("<body>");
-            bannerRequestDispatcher.include(request, response);
-            printArticle(article);
-            printFooter();
-            out.println("</body>");
-
-            out.println("</html>");
-            out.close();
-
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid article ID: " + request.getParameter("articleId"));
-        }
-    }
 
     @Override
     protected void printBody() {
+        Article article = (Article) request.getAttribute("article");
 
+        if (article != null)
+            printArticle(article);
+        else
+            System.out.println("Invalid article ID: " + request.getParameter("articleId"));
     }
 
-    private void printHead() {
+
+    @Override
+    protected void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
-                + "<title>Catalog</title>"
+                + "<title>Article</title>"
                 + "<link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap\" rel=\"stylesheet\">\r\n"
                 + "<link href=\"style.css\" rel=\"stylesheet\">"
                 + "<link href=\"article.css\" rel=\"stylesheet\">"

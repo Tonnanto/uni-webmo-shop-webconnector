@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="ShopWebConnector-7.0-SNAPSHOT.war">
+    <root id="archive" name="ShopWebConnector-9.0-SNAPSHOT.war">
       <element id="artifact" artifact-name="ShopWebConnector:war exploded" />
     </root>
   </artifact>

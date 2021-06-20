@@ -4,7 +4,7 @@ package de.stamme.webshop.connector.webconnector.controller.actions;
 import de.leuphana.shop.structure.Cart;
 import jakarta.servlet.annotation.WebServlet;
 
-@WebServlet("showCartAction")
+@WebServlet(name = "ShowCartAction", value = "/showCartAction")
 public class ShowCartAction extends WebshopAction {
     @Override
     protected String doAction() {

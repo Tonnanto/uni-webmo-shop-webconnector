@@ -40,7 +40,7 @@ public class WebshopDispatcherServlet extends HttpServlet {
                 dispatch2Action("/showArticleAction");
                 break;
             case SHOW_CATALOG:
-                dispatch2Action("showCatalogAction");
+                dispatch2Action("/showCatalogAction");
                 break;
             case SHOW_CART:
                 dispatch2Action("/showCartAction");

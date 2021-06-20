@@ -4,7 +4,8 @@ import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Article;
 import jakarta.servlet.annotation.WebServlet;
 
-@WebServlet("showArticleAction")
+
+@WebServlet(name = "ShowArticleAction", value = "/showArticleAction")
 public class ShowArticleAction extends WebshopAction {
     @Override
     protected String doAction() {

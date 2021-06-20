@@ -2,16 +2,8 @@ package de.stamme.webshop.connector.webconnector.controller;
 
 import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Article;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Set;
 
@@ -58,10 +50,12 @@ public class CatalogServlet extends WebshopServlet {
             String name = article.getName();
             String price = priceFormatter.format(article.getPrice());
 
-            out.println("<tr data-href=\"./showArticle?articleId=%s\">");
+            out.println("<tr>");
             out.printf(
-                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td><td><a href=\"./showArticle?articleId=%s\">%s</a></td><td>%s</td><td>"
-                            + "<a class=\"button\" href=\"./showCatalog?action=addArticle&articleId=%s\">Add to cart</a></td>",
+                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td>" +
+                    "<td><a href=\"./dispatchAction?action=SHOW_ARTICLE&articleId=%s\">%s</a></td>" +
+                    "<td>%s</td>" +
+                    "<td><a class=\"button\" href=\"./dispatchAction?action=ADD_ARTICLE&articleId=%s\">Add to cart</a></td>",
                     imageLocation, articleId, name, price, articleId
             );
             out.println("</tr>");

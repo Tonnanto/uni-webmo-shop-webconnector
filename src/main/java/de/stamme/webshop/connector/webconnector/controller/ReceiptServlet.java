@@ -63,7 +63,10 @@ public class ReceiptServlet extends WebshopServlet {
 
             out.println("<tr data-href=\"./showArticle?articleId=%s\">");
             out.println(String.format(
-                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td><td><a href=\"./showArticle?articleId=%s\">%s</a><td>%s pcs.</td></td><td>%s</td>",
+                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td>" +
+                    "<td><a href=\"./dispatchAction?action=SHOW_ARTICLE&articleId=%s\">%s</a></td>" +
+                    "<td>%s pcs.</td>" +
+                    "<td>%s</td>",
                     imageLocation, articleId, name, quantity, price
             ));
             out.println("</tr>");

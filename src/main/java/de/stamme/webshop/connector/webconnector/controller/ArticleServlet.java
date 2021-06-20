@@ -1,17 +1,9 @@
 package de.stamme.webshop.connector.webconnector.controller;
 
-import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Article;
 import de.leuphana.shop.structure.Book;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +22,10 @@ public class ArticleServlet extends WebshopServlet {
 
     @Override
     protected void printBody() {
-        Article article = (Article) request.getAttribute("article");
+        Object article = request.getAttribute("article");
 
-        if (article != null)
-            printArticle(article);
+        if (article instanceof Article)
+            printArticle((Article) article);
         else
             System.out.println("Invalid article ID: " + request.getParameter("articleId"));
     }

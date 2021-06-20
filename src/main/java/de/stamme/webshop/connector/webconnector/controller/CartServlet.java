@@ -1,19 +1,10 @@
 package de.stamme.webshop.connector.webconnector.controller;
 
-import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Article;
 import de.leuphana.shop.structure.Cart;
 import de.leuphana.shop.structure.CartItem;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 @WebServlet(name = "CartServlet", value = "/showCart")
@@ -70,10 +61,13 @@ public class CartServlet extends WebshopServlet {
             int quantity = cartItem.getQuantity();
             String price = priceFormatter.format(cartItem.getArticle().getPrice());
 
-            out.println("<tr data-href=\"./showArticle?articleId=%s\">");
+            out.println("<tr>");
             out.println(String.format(
-                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td><td><a href=\"./showArticle?articleId=%s\">%s</a><td>%s pcs.</td></td><td>%s</td><td>"
-                            + "<a class=\"button\" href=\"./showCart?action=removeArticle&articleId=%s\">Remove from cart</a></td>",
+                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td>" +
+                            "<td><a href=\"./dispatchAction?action=SHOW_ARTICLE&articleId=%s\">%s</a></td>" +
+                            "<td>%s pcs.</td>" +
+                            "<td>%s</td>" +
+                            "<td><a class=\"button\" href=\"./dispatchAction?action=REMOVE_ARTICLE&articleId=%s\">Remove from cart</a></td>",
                     imageLocation, articleId, name, quantity, price, articleId
             ));
             out.println("</tr>");
@@ -91,7 +85,7 @@ public class CartServlet extends WebshopServlet {
 
         out.println("</table>");
 
-        out.println("<a class=\"order-button\" href=\"./orderArticles\">Order Articles</a>");
+        out.println("<a class=\"order-button\" href=\"./dispatchAction?action=ORDER_ARTICLE\">Order Articles</a>");
     }
 
     private void printDecrementCartItemQuantity(Article article) {

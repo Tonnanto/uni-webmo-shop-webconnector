@@ -1,8 +1,6 @@
 package de.stamme.webshop.connector.webconnector.controller;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -16,7 +14,7 @@ public class BannerServlet extends WebshopServlet {
     protected PrintWriter out;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         out = response.getWriter();
 
         response.setContentType("text/html");
@@ -24,7 +22,7 @@ public class BannerServlet extends WebshopServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         out = response.getWriter();
 
         response.setContentType("text/html");
@@ -46,10 +44,10 @@ public class BannerServlet extends WebshopServlet {
                 + "	</div>\r\n"
                 + "	<ul class=\"nav-links\">\r\n"
                 + "		<li>\r\n"
-                + "			<a href=\"./showCatalog\">Catalog</a>\r\n"
+                + "			<a href=\"./dispatchAction?action=SHOW_CATALOG\">Catalog</a>\r\n"
                 + "		</li>\r\n"
                 + "		<li>\r\n"
-                + "			<a href=\"./showCart\">Cart</a>\r\n"
+                + "			<a href=\"./dispatchAction?action=SHOW_CART\">Cart</a>\r\n"
                 + "		</li>\r\n"
                 + "	</ul>\r\n");
 

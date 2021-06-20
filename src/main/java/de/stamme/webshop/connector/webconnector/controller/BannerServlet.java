@@ -1,8 +1,6 @@
-package de.stamme.ShopWebConnector;
+package de.stamme.webshop.connector.webconnector.controller;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -10,13 +8,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(name = "BannerServlet", value = "/showBanner")
-public class BannerServlet extends HttpServlet {
+public class BannerServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
     protected PrintWriter out;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         out = response.getWriter();
 
         response.setContentType("text/html");
@@ -24,11 +22,16 @@ public class BannerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         out = response.getWriter();
 
         response.setContentType("text/html");
         printBanner();
+    }
+
+    @Override
+    protected void printBody() {
+
     }
 
     private void printBanner() {
@@ -41,10 +44,10 @@ public class BannerServlet extends HttpServlet {
                 + "	</div>\r\n"
                 + "	<ul class=\"nav-links\">\r\n"
                 + "		<li>\r\n"
-                + "			<a href=\"./showCatalog\">Catalog</a>\r\n"
+                + "			<a href=\"./dispatchAction?action=SHOW_CATALOG\">Catalog</a>\r\n"
                 + "		</li>\r\n"
                 + "		<li>\r\n"
-                + "			<a href=\"./showCart\">Cart</a>\r\n"
+                + "			<a href=\"./dispatchAction?action=SHOW_CART\">Cart</a>\r\n"
                 + "		</li>\r\n"
                 + "	</ul>\r\n");
 

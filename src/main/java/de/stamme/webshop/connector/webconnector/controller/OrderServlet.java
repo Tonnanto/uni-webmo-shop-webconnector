@@ -1,69 +1,30 @@
-package de.stamme.ShopWebConnector;
+package de.stamme.webshop.connector.webconnector.controller;
 
-import de.leuphana.shop.behaviour.Shop;
 import de.leuphana.shop.structure.Cart;
 import de.leuphana.shop.structure.CartItem;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 @WebServlet(name = "OrderServlet", value = "/orderArticles")
-public class OrderServlet extends HttpServlet {
-
-    private PrintWriter out;
-    private Shop onlineShop;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private Integer customerId;
+public class OrderServlet extends WebshopServlet {
 
     private DecimalFormat priceFormatter;
 
     @Override
     public void init() {
-        onlineShop = Shop.create();
         priceFormatter = new DecimalFormat("0.00€");
     }
 
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        this.request = request;
-        this.response = response;
-        this.out = response.getWriter();
-        this.customerId = getCustomerIdFromSession(request);
-
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
-
-        out.println("<html>");
-
-        printHead();
-
-        out.println("<body>");
-
-        bannerRequestDispatcher.include(request, response);
-
+    protected void printBody() {
         out.println("<div class=\"main-content\">");
         printCartAndOrderForm();
         out.println("</div>");
-
-        printFooter();
-
-        out.println("</body>");
-
-        out.println("</html>");
-
-        out.close();
     }
 
-    private void printHead() {
+    protected void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
                 + "<title>Order</title>"
@@ -74,7 +35,7 @@ public class OrderServlet extends HttpServlet {
     }
 
     private void printCartAndOrderForm() {
-        Cart cart = onlineShop.getCartForCustomer(this.customerId);
+        Cart cart = (Cart) request.getAttribute("cart");
 
         // Check if items in cart
         if (cart == null || cart.getNumberOfArticles() == 0) {
@@ -103,10 +64,13 @@ public class OrderServlet extends HttpServlet {
             int quantity = cartItem.getQuantity();
             String price = priceFormatter.format(cartItem.getArticle().getPrice());
 
-            out.println("<tr data-href=\"./showArticle?articleId=%s\">");
+            out.println("<tr>");
             out.println(String.format(
-                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td><td><a href=\"./showArticle?articleId=%s\">%s</a><td>%s pcs.</td></td><td>%s</td><td>"
-                            + "<a class=\"button\" href=\"./showCart?action=removeArticle&articleId=%s\">Remove from cart</a></td>",
+                    "<td><img class=\"thumbnail-image\" src=\"%s\"></td>" +
+                    "<td><a href=\"./dispatchAction?action=SHOW_ARTICLE&articleId=%s\">%s</a></td>" +
+                    "<td>%s pcs.</td>" +
+                    "<td>%s</td>" +
+                    "<td><a class=\"button\" href=\"./dispatchAction?action=REMOVE_ARTICLE&articleId=%s\">Remove from cart</a></td>",
                     imageLocation, articleId, name, quantity, price, articleId
             ));
             out.println("</tr>");
@@ -129,7 +93,7 @@ public class OrderServlet extends HttpServlet {
         out.println("<div class=\"order-form\">");
         out.println("<h3>Please enter your information here:</h3>");
 
-        out.println("<form action=\"./showReceipt\" method=post>");
+        out.println("<form action=\"./dispatchAction?action=SHOW_RECEIPT\" method=post>");
 
         out.println("<label for=\"firstName\">First name:</label><br>");
         out.println("<input type=\"text\" id=\"firstName\" name=\"firstName\" value=\"\"><br>");
@@ -143,24 +107,5 @@ public class OrderServlet extends HttpServlet {
         out.println("</form>");
 
         out.println("</div>");
-    }
-
-    private void printFooter() {
-
-    }
-
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
     }
 }

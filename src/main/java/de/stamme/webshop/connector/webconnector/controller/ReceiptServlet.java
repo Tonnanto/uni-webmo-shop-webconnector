@@ -1,74 +1,36 @@
 package de.stamme.webshop.connector.webconnector.controller;
 
-import de.leuphana.shop.behaviour.Shop;
-import de.leuphana.shop.structure.Cart;
-import de.leuphana.shop.structure.CartItem;
 import de.leuphana.shop.structure.Order;
 import de.leuphana.shop.structure.OrderPosition;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.annotation.WebServlet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 @WebServlet(name = "ReceiptServlet", value = "/showReceipt")
 public class ReceiptServlet extends WebshopServlet {
 
-    private PrintWriter out;
-    private Shop onlineShop;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private Integer customerId;
     private DecimalFormat priceFormatter;
 
     @Override
     public void init() {
-        onlineShop = Shop.create();
         priceFormatter = new DecimalFormat("0.00€");
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        this.request = request;
-        this.response = response;
-        this.out = response.getWriter();
-        this.customerId = getCustomerIdFromSession(request);
-
-        Order order = onlineShop.checkOutCart(this.customerId);
-
-        RequestDispatcher bannerRequestDispatcher = request.getRequestDispatcher("/showBanner");
-
-        out.println("<html>");
-
-        printHead();
-
-        out.println("<body>");
-
-        bannerRequestDispatcher.include(request, response);
-
-        out.println("<div class=\"main-content\">");
-        printReceipt(order);
-        out.println("</div>");
-
-        printFooter();
-
-        out.println("</body>");
-
-        out.println("</html>");
-
-        out.close();
-    }
-
-    @Override
     protected void printBody() {
+        Order order = (Order) request.getAttribute("order");
 
+        if (order != null) {
+            out.println("<div class=\"main-content\">");
+            printReceipt(order);
+            out.println("</div>");
+        }
+        else
+            System.out.println("Order not found");
     }
 
 
-    private void printHead() {
+    protected void printHead() {
         out.println("<head>"
                 + "<meta charset=\"utf-8\">"
                 + "<title>Receipt</title>"
@@ -121,20 +83,5 @@ public class ReceiptServlet extends WebshopServlet {
 
         out.println("<h2>Thank you!</h2>");
 
-    }
-
-    private Integer getCustomerIdFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        Integer customerId = null;
-
-        if (session.getAttribute("customerId") instanceof Integer)
-            customerId = (Integer) session.getAttribute("customerId");
-
-        if (customerId == null) {
-            customerId = onlineShop.createCustomerWithCart();
-            session.setAttribute("customerId", customerId);
-        }
-
-        return customerId;
     }
 }

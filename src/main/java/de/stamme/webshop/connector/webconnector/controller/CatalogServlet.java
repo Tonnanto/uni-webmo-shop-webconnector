@@ -7,7 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import java.text.DecimalFormat;
 import java.util.Set;
 
-@WebServlet(name = "CatalogServlet", value = "/showCatalog")
+//@WebServlet(name = "CatalogServlet", value = "/showCatalog")
 public class CatalogServlet extends WebshopServlet {
     private static final long serialVersionUID = 1L;
 
